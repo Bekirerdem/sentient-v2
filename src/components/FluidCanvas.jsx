@@ -649,9 +649,23 @@ const FluidCanvas = () => {
       b: 0.5,
     });
 
+    // Automatic ambient animation for mobile/touch devices
+    const autoAnimate = setInterval(() => {
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      const dx = (Math.random() - 0.5) * 20;
+      const dy = (Math.random() - 0.5) * 20;
+      splat(x, y, dx, dy, {
+        r: 0.2 + Math.random() * 0.3,
+        g: 0.3 + Math.random() * 0.3,
+        b: 0.8 + Math.random() * 0.2,
+      });
+    }, 2000); // Every 2 seconds
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
+      clearInterval(autoAnimate);
     };
   }, []);
 
