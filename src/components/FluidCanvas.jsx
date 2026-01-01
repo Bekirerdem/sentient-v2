@@ -11,18 +11,18 @@ const FluidCanvas = () => {
     const config = {
       SIM_RESOLUTION: 128,
       DYE_RESOLUTION: 1024,
-      DENSITY_DISSIPATION: 0.97, // Lower = stays longer
-      VELOCITY_DISSIPATION: 0.98,
+      DENSITY_DISSIPATION: 4.5, // Much faster fade to prevent whiteout
+      VELOCITY_DISSIPATION: 2.5,
       PRESSURE: 0.8,
       PRESSURE_ITERATIONS: 20,
-      CURL: 50, // More turbulence
-      SPLAT_RADIUS: 0.5, // Increased default
+      CURL: 40, 
+      SPLAT_RADIUS: 0.4, 
       SPLAT_FORCE: 6000,
       SHADING: true,
       TRANSPARENT: true,
     };
 
-    // WebGL Helper Functions
+    // WebGL Helper Functions (restored original quality context)
     function getWebGLContext(canvas) {
       const params = {
         alpha: true,
@@ -631,9 +631,9 @@ const FluidCanvas = () => {
 
     const handleMouseMove = (e) => {
       splat(e.clientX, e.clientY, e.movementX * 10, -e.movementY * 10, {
-        r: 0.2,
-        g: 0.4,
-        b: 1.0,
+        r: 0.1,
+        g: 0.2,
+        b: 0.8,
       }, config.SPLAT_RADIUS);
     };
 
@@ -648,12 +648,11 @@ const FluidCanvas = () => {
       const dx = t.clientX - lastTouchX;
       const dy = t.clientY - lastTouchY;
       
-      // MUCH LARGER splats on touch
-      splat(t.clientX, t.clientY, dx * 80, -dy * 80, {
-        r: 0.4,
-        g: 0.6,
+      splat(t.clientX, t.clientY, dx * 40, -dy * 40, {
+        r: 0.2,
+        g: 0.3,
         b: 1.0,
-      }, config.SPLAT_RADIUS * 3.5);
+      }, config.SPLAT_RADIUS * 2.0);
 
       lastTouchX = t.clientX;
       lastTouchY = t.clientY;
@@ -665,17 +664,15 @@ const FluidCanvas = () => {
       const deltaY = currentScrollY - lastScrollY;
       lastScrollY = currentScrollY;
 
-      // Massive atmospheric disturbances on scroll
-      for(let i = 0; i < 2; i++) {
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        
-        splat(x, y, (Math.random() - 0.5) * 600, -deltaY * 10, {
-          r: 0.2,
-          g: 0.4,
-          b: 0.9,
-        }, config.SPLAT_RADIUS * 8.0);
-      }
+      // Atmospheric disturbances on scroll - reduced radius to prevent whiteout
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      
+      splat(x, y, (Math.random() - 0.5) * 300, -deltaY * 5, {
+        r: 0.1,
+        g: 0.2,
+        b: 0.6,
+      }, config.SPLAT_RADIUS * 2.5);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -685,28 +682,23 @@ const FluidCanvas = () => {
 
     // Initial Splat
     splat(window.innerWidth / 2, window.innerHeight / 2, 0, -20, {
-      r: 0.5,
-      g: 0.5,
-      b: 0.5,
+      r: 0.3,
+      g: 0.4,
+      b: 0.8,
     });
 
     // Automatic ambient animation
     const autoAnimate = setInterval(() => {
-      const isMobileVal = window.innerWidth < 768;
-      const count = isMobileVal ? 3 : 1; 
-      
-      for(let i = 0; i < count; i++) {
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        const dx = (Math.random() - 0.5) * 60;
-        const dy = (Math.random() - 0.5) * 60;
-        splat(x, y, dx, dy, {
-          r: 0.3 + Math.random() * 0.2,
-          g: 0.4 + Math.random() * 0.2,
-          b: 0.8 + Math.random() * 0.2,
-        }, config.SPLAT_RADIUS * 2);
-      }
-    }, isMobile() ? 800 : 2000);
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      const dx = (Math.random() - 0.5) * 40;
+      const dy = (Math.random() - 0.5) * 40;
+      splat(x, y, dx, dy, {
+        r: 0.1 + Math.random() * 0.1,
+        g: 0.2 + Math.random() * 0.1,
+        b: 0.5 + Math.random() * 0.2,
+      }, config.SPLAT_RADIUS * 1.5);
+    }, isMobile() ? 1500 : 3000);
 
     function isMobile() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
@@ -725,7 +717,7 @@ const FluidCanvas = () => {
     <canvas
       ref={canvasRef}
       id="fluid"
-      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-60 md:opacity-30 transition-opacity"
+      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-35 md:opacity-20 transition-opacity"
     />
   );
 };
