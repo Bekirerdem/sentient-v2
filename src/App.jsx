@@ -119,6 +119,99 @@ function App() {
           </div>
         </section>
 
+        {/* PROJECTS SECTION */}
+        <section id="projects" className="py-24 px-6 bg-black/20">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
+              <div className="max-w-2xl">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+                  <span className="text-[#6366F1]">SELECTED</span> // WORKS
+                </h2>
+                <p className="text-neutral-400 text-lg">
+                  Sınırları zorladığımız, yapay zekayı estetikle harmanladığımız projelerimiz.
+                </p>
+              </div>
+              <div className="text-[#6366F1] font-mono text-sm hidden md:block">
+                [ VIEW_ALL_PROJECTS_v2.0 ]
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Project 1 */}
+              <div className="group relative overflow-hidden rounded-2xl aspect-video bg-neutral-900 border border-white/5 hover:border-[#6366F1]/50 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                <div className="absolute inset-0 bg-[#6366F1]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                  <div className="text-[#6366F1] font-mono text-xs mb-2">NEURAL INTERFACE</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">CYBER-SENTIENCE OS</h3>
+                  <p className="text-neutral-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    Otonom karar verme yeteneğine sahip yeni nesil kullanıcı arayüzü mimarisi.
+                  </p>
+                </div>
+              </div>
+
+              {/* Project 2 */}
+              <div className="group relative overflow-hidden rounded-2xl aspect-video bg-neutral-900 border border-white/5 hover:border-[#6366F1]/50 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                <div className="absolute inset-0 bg-[#6366F1]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute bottom-0 left-0 p-8 z-20 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                  <div className="text-[#6366F1] font-mono text-xs mb-2">AI AUTOMATION</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">VOID ECOSYSTEM</h3>
+                  <p className="text-neutral-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    E-ticaret devleri için geliştirilmiş, insan müdahalesi gerektirmeyen otonom yönetim sistemi.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PROCESS SECTION */}
+        <section id="process" className="py-24 px-6 border-y border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+                <span className="text-[#6366F1]">OUR</span> // PROCESS
+              </h2>
+              <p className="text-neutral-400 max-w-2xl mx-auto text-lg">
+                Fikirden gerçeğe; sistematik ve optimize edilmiş iş akışımız.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-12">
+              {[
+                {
+                  step: "01",
+                  title: "EXTRACTION",
+                  desc: "İşletmenizin darboğazlarını ve verimsiz noktalarını cerrahi bir hassasiyetle belirliyoruz."
+                },
+                {
+                  step: "02",
+                  title: "NEURAL MAPPING",
+                  desc: "Size özel yapay zeka mimarisini ve otomasyon haritalarını tasarlıyoruz."
+                },
+                {
+                  step: "03",
+                  title: "DEPLOYMENT",
+                  desc: "Sistemi hayata geçiriyor ve sürekli öğrenen algoritmalarla optimize ediyoruz."
+                }
+              ].map((item, i) => (
+                <div key={i} className="relative p-8 glass-card rounded-2xl border-white/5 group hover:border-[#6366F1]/40 transition-all">
+                  <div className="text-5xl font-black text-[#6366F1]/10 absolute -top-4 -left-2 group-hover:text-[#6366F1]/20 transition-colors">
+                    {item.step}
+                  </div>
+                  <div className="relative z-10">
+                    <h3 className="text-xl font-bold mb-4 text-[#6366F1] tracking-wider">{item.title}</h3>
+                    <p className="text-neutral-400 text-sm leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section
           id="contact"
