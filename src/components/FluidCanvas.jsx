@@ -11,12 +11,12 @@ const FluidCanvas = () => {
     const config = {
       SIM_RESOLUTION: 128,
       DYE_RESOLUTION: 1024,
-      DENSITY_DISSIPATION: 1,
-      VELOCITY_DISSIPATION: 0.2,
+      DENSITY_DISSIPATION: 0.97, // Lower = stays longer
+      VELOCITY_DISSIPATION: 0.98,
       PRESSURE: 0.8,
       PRESSURE_ITERATIONS: 20,
-      CURL: 30,
-      SPLAT_RADIUS: 0.25,
+      CURL: 50, // More turbulence
+      SPLAT_RADIUS: 0.5, // Increased default
       SPLAT_FORCE: 6000,
       SHADING: true,
       TRANSPARENT: true,
@@ -601,7 +601,7 @@ const FluidCanvas = () => {
       }
     }
 
-    function splat(x, y, dx, dy, color) {
+    function splat(x, y, dx, dy, color, radius = config.SPLAT_RADIUS) {
       gl.useProgram(splatProgram);
       gl.uniform1i(splatProgram.uniforms.uTarget, velocity.read.attach(0));
       gl.uniform1f(splatProgram.uniforms.aspectRatio, canvas.width / canvas.height);
@@ -611,7 +611,7 @@ const FluidCanvas = () => {
         1.0 - y / canvas.height
       );
       gl.uniform3f(splatProgram.uniforms.color, dx, dy, 0.0);
-      gl.uniform1f(splatProgram.uniforms.radius, config.SPLAT_RADIUS / 100.0);
+      gl.uniform1f(splatProgram.uniforms.radius, radius / 100.0);
       blit(velocity.write);
       velocity.swap();
 
@@ -626,21 +626,62 @@ const FluidCanvas = () => {
     update();
 
     // Interactions
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+
     const handleMouseMove = (e) => {
       splat(e.clientX, e.clientY, e.movementX * 10, -e.movementY * 10, {
         r: 0.2,
         g: 0.4,
         b: 1.0,
-      });
+      }, config.SPLAT_RADIUS);
+    };
+
+    const handleTouchStart = (e) => {
+      const t = e.touches[0];
+      lastTouchX = t.clientX;
+      lastTouchY = t.clientY;
     };
 
     const handleTouchMove = (e) => {
       const t = e.touches[0];
-      splat(t.clientX, t.clientY, 10, 10, { r: 0.2, g: 0.4, b: 1.0 });
+      const dx = t.clientX - lastTouchX;
+      const dy = t.clientY - lastTouchY;
+      
+      // MUCH LARGER splats on touch
+      splat(t.clientX, t.clientY, dx * 80, -dy * 80, {
+        r: 0.4,
+        g: 0.6,
+        b: 1.0,
+      }, config.SPLAT_RADIUS * 3.5);
+
+      lastTouchX = t.clientX;
+      lastTouchY = t.clientY;
+    };
+
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const deltaY = currentScrollY - lastScrollY;
+      lastScrollY = currentScrollY;
+
+      // Massive atmospheric disturbances on scroll
+      for(let i = 0; i < 2; i++) {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        
+        splat(x, y, (Math.random() - 0.5) * 600, -deltaY * 10, {
+          r: 0.2,
+          g: 0.4,
+          b: 0.9,
+        }, config.SPLAT_RADIUS * 8.0);
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchStart);
     window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     // Initial Splat
     splat(window.innerWidth / 2, window.innerHeight / 2, 0, -20, {
@@ -649,22 +690,33 @@ const FluidCanvas = () => {
       b: 0.5,
     });
 
-    // Automatic ambient animation for mobile/touch devices
+    // Automatic ambient animation
     const autoAnimate = setInterval(() => {
-      const x = Math.random() * window.innerWidth;
-      const y = Math.random() * window.innerHeight;
-      const dx = (Math.random() - 0.5) * 20;
-      const dy = (Math.random() - 0.5) * 20;
-      splat(x, y, dx, dy, {
-        r: 0.2 + Math.random() * 0.3,
-        g: 0.3 + Math.random() * 0.3,
-        b: 0.8 + Math.random() * 0.2,
-      });
-    }, 2000); // Every 2 seconds
+      const isMobileVal = window.innerWidth < 768;
+      const count = isMobileVal ? 3 : 1; 
+      
+      for(let i = 0; i < count; i++) {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        const dx = (Math.random() - 0.5) * 60;
+        const dy = (Math.random() - 0.5) * 60;
+        splat(x, y, dx, dy, {
+          r: 0.3 + Math.random() * 0.2,
+          g: 0.4 + Math.random() * 0.2,
+          b: 0.8 + Math.random() * 0.2,
+        }, config.SPLAT_RADIUS * 2);
+      }
+    }, isMobile() ? 800 : 2000);
+
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('scroll', handleScroll);
       clearInterval(autoAnimate);
     };
   }, []);
@@ -673,7 +725,7 @@ const FluidCanvas = () => {
     <canvas
       ref={canvasRef}
       id="fluid"
-      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-25"
+      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-60 md:opacity-30 transition-opacity"
     />
   );
 };
