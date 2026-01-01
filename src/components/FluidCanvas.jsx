@@ -11,12 +11,12 @@ const FluidCanvas = () => {
     const config = {
       SIM_RESOLUTION: 128,
       DYE_RESOLUTION: 1024,
-      DENSITY_DISSIPATION: 4.5, // Much faster fade to prevent whiteout
-      VELOCITY_DISSIPATION: 2.5,
+      DENSITY_DISSIPATION: 3.5, // Slightly lower = stays a bit longer
+      VELOCITY_DISSIPATION: 2.0,
       PRESSURE: 0.8,
       PRESSURE_ITERATIONS: 20,
-      CURL: 40, 
-      SPLAT_RADIUS: 0.4, 
+      CURL: 45, 
+      SPLAT_RADIUS: 0.5, 
       SPLAT_FORCE: 6000,
       SHADING: true,
       TRANSPARENT: true,
@@ -668,11 +668,11 @@ const FluidCanvas = () => {
       const x = Math.random() * window.innerWidth;
       const y = Math.random() * window.innerHeight;
       
-      splat(x, y, (Math.random() - 0.5) * 300, -deltaY * 5, {
+      splat(x, y, (Math.random() - 0.5) * 400, -deltaY * 7, {
         r: 0.1,
         g: 0.2,
-        b: 0.6,
-      }, config.SPLAT_RADIUS * 2.5);
+        b: 0.7,
+      }, config.SPLAT_RADIUS * 3.5);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -717,7 +717,7 @@ const FluidCanvas = () => {
     <canvas
       ref={canvasRef}
       id="fluid"
-      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-35 md:opacity-20 transition-opacity"
+      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 opacity-45 md:opacity-25 transition-opacity"
     />
   );
 };
